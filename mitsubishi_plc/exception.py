@@ -32,3 +32,11 @@ class PLCWriteError(PLCBaseException):
     This exception is a subclass of PLCBaseException and is raised when there is
     an error related to writing data to the PLC.
     """
+
+
+class PLCRuntimeError(PLCBaseException):
+    """Exception raised for PLC run time errors.
+
+    This exception is a subclass of PLCBaseException and is raised when there is
+    an error run time to the PLC.
+    """
