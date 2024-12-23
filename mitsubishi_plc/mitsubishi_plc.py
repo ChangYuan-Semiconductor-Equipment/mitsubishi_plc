@@ -28,16 +28,23 @@ class MitsubishiPlc:
         return self._connection_state
 
     def communication_open(self) -> bool:
-        """Open the connection to the PLC."""
+        """Open the connection to the PLC.
+
+        Returns:
+            bool: True if the connection is open, False otherwise.
+
+        Raises:
+            PLCConnectError: If the connection is not open.
+        """
         try:
             if not self._connection_state:
                 result = self.melsec_net.ConnectServer()
                 if result.IsSuccess:
                     self._connection_state = True
                     return True
-                return False
+            return False
         except Exception as e:
-            self.logger.error(f"Error connecting to PLC: {e}")
+            self.logger.error("Error connecting to PLC: %s", e)
             raise PLCConnectError(f"Error connecting to PLC: {e}") from e
 
     def communication_close(self):
