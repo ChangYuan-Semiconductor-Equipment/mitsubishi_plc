@@ -55,120 +55,120 @@ class MitsubishiPlc:
             self.logger.info("Closed connection to PLC")
 
     def execute_read(
-            self, data_type: str, address: str, length: int = None, save_log: bool = True
+            self, data_type: str, address: str, size: int = None, save_log: bool = True
     ) -> Union[str, int, float, bool, list]:
         """Execute a read operation on the PLC.
 
         Args:
-            data_type (str): The data type to read.
-            address (str): The address to read from.
-            length (int): The length of the data to read.
-            save_log (bool): Whether to save the log or not.
+            data_type: The data type to read.
+            address: The address to read from.
+            size: The size of the data to read.
+            save_log: Whether to save the log or not.
 
         Returns:
             Union[str, int, float, bool, list]: The value read from the PLC.
         """
         with self.lock:
             read_func = getattr(self, f"read_{data_type}")
-            return read_func(address, length=length, save_log=save_log)
+            return read_func(address, size=size, save_log=save_log)
 
-    def read_bool(self, address, length=None, save_log=True) -> Union[bool, list]:
+    def read_bool(self, address: str, size: int = None, save_log: bool = True) -> Union[bool, list]:
         """Read a boolean value from the PLC.
 
         Args:
             address: The address to read from.
-            length: The length of the data to read.
+            size: The size of the data to read.
             save_log: Whether to save the log or not.
 
         Returns:
             Union[bool, list]: The value read from the PLC.
         """
-        bool_result = self.melsec_net.ReadBool(address, length)
+        bool_result = self.melsec_net.ReadBool(address, size)
         bool_value = bool_result.Content
         if save_log:
             self.logger.info("Read bool on %s, returned bool value: %s", address, bool_value)
         return bool_value
 
-    def read_int16(self, address, length=None, save_log=True) -> Union[int, list]:
+    def read_int16(self, address: str, size: int = None, save_log: bool = True) -> Union[int, list]:
         """Read an integer value from the PLC.
 
         Args:
             address: The address to read from.
-            length: The length of the data to read.
+            size: The size of the data to read.
             save_log: Whether to save the log or not.
 
         Returns:
             Union[int, list]: The value read from the PLC.
         """
-        int_result = self.melsec_net.ReadInt16(address, length)
+        int_result = self.melsec_net.ReadInt16(address, size)
         int_value = int_result.Content
         if save_log:
             self.logger.info("Read int on %s, returned int value: %s", address, int_value)
         return int_value
 
-    def read_int32(self, address, length=None, save_log=True) -> Union[int, list]:
+    def read_int32(self, address: str, size: int = None, save_log: bool = True) -> Union[int, list]:
         """Read an 4 byte integer value from the PLC.
 
         Args:
             address: The address to read from.
-            length: The length of the data to read.
+            size: The size of the data to read.
             save_log: Whether to save the log or not.
 
         Returns:
             Union[int, list]: The value read from the PLC.
         """
-        int_result = self.melsec_net.ReadInt32(address, length)
+        int_result = self.melsec_net.ReadInt32(address, size)
         int_value = int_result.Content
         if save_log:
             self.logger.info("Read int32 on %s, returned int value: %s", address, int_value)
         return int_value
 
-    def read_float(self, address, length=None, save_log=True) -> Union[float, list]:
+    def read_float(self, address: str, size: int = None, save_log: bool = True) -> Union[float, list]:
         """Read a float value from the PLC.
 
         Args:
             address: The address to read from.
-            length: The length of the data to read.
+            size: The size of the data to read.
             save_log: Whether to save the log or not.
 
         Returns:
             Union[float, list]: The value read from the PLC.
         """
-        float_result = self.melsec_net.ReadFloat(address, length)
+        float_result = self.melsec_net.ReadFloat(address, size)
         float_value = float_result.Content
         if save_log:
             self.logger.info("Read float on %s, returned float value: %s", address, float_value)
         return float_value
 
-    def read_double(self, address, length=None, save_log=True) -> Union[float, list]:
+    def read_double(self, address: str, size: int = None, save_log: bool = True) -> Union[float, list]:
         """Read a double value from the PLC.
 
         Args:
             address: The address to read from.
-            length: The length of the data to read.
+            size: The size of the data to read.
             save_log: Whether to save the log or not.
 
         Returns:
             Union[float, list]: The value read from the PLC.
         """
-        double_result = self.melsec_net.ReadDouble(address, length)
+        double_result = self.melsec_net.ReadDouble(address, size)
         double_value = double_result.Content
         if save_log:
             self.logger.info("Read double on %s, returned double value: %s", address, double_value)
         return double_value
 
-    def read_str(self, address, length, save_log=True) -> Union[str, list]:
+    def read_str(self, address: str, size: int, save_log: bool = True) -> Union[str, list]:
         """Read a string value from the PLC.
 
         Args:
             address: The address to read from.
-            length: The length of the string to read.
+            size: The size of the string to read.
             save_log: Whether to save the log or not.
 
         Returns:
             Union[str, list]: The value read from the PLC.
         """
-        string_result = self.melsec_net.ReadString(address, length)
+        string_result = self.melsec_net.ReadString(address, size)
         string_value = string_result.Content.strip().replace("\x00", "")
         if save_log:
             self.logger.info("Read string on %s, returned string value: %s", address, string_value)
@@ -180,10 +180,10 @@ class MitsubishiPlc:
         """Execute a write operation on the PLC.
 
         Args:
-            data_type (str): The data type to write.
-            address (str): The address to write to.
-            value (Union[str, int, float, bool]): The value to write.
-            save_log (bool): Whether to save the log or not.
+            data_type: The data type to write.
+            address: The address to write to.
+            value: The value to write.
+            save_log: Whether to save the log or not, default save.
 
         Returns:
             bool: True if the wrote was successful, False otherwise.
@@ -192,7 +192,7 @@ class MitsubishiPlc:
             write_func = getattr(self, f"write_{data_type}")
             return write_func(address, value, save_log=save_log)
 
-    def write_bool(self, address: str, value: bool, save_log=True) -> bool:
+    def write_bool(self, address: str, value: bool, save_log: bool = True) -> bool:
         """Write a boolean value to the PLC.
 
         Args:
@@ -208,7 +208,7 @@ class MitsubishiPlc:
             self.logger.info("Wrote bool on %s, wrote value: %s", address, value)
         return result.IsSuccess
 
-    def write_int16(self, address: str, value: int, save_log=True) -> bool:
+    def write_int16(self, address: str, value: int, save_log: bool = True) -> bool:
         """Write an integer value to the PLC.
 
         Args:
@@ -224,7 +224,7 @@ class MitsubishiPlc:
             self.logger.info("Wrote int on %s, wrote value: %s", address, value)
         return result.IsSuccess
 
-    def write_float(self, address: str, value: float, save_log=True) -> bool:
+    def write_float(self, address: str, value: float, save_log: bool = True) -> bool:
         """Write a float value to the PLC.
 
         Args:
@@ -240,7 +240,7 @@ class MitsubishiPlc:
             self.logger.info("Wrote float on %s, wrote value: %s", address, value)
         return result.IsSuccess
 
-    def write_double(self, address: str, value: float, save_log=True) -> bool:
+    def write_double(self, address: str, value: float, save_log: bool = True) -> bool:
         """Write a double value to the PLC.
 
         Args:
@@ -256,7 +256,7 @@ class MitsubishiPlc:
             self.logger.info("Wrote double on %s, wrote value: %s", address, value)
         return result.IsSuccess
 
-    def write_str(self, address: str, value: str, save_log=True) -> bool:
+    def write_str(self, address: str, value: str, save_log: bool = True) -> bool:
         """Write a string value to the PLC.
 
         Args:
