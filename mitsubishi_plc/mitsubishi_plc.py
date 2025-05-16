@@ -175,14 +175,14 @@ class MitsubishiPlc:
         return string_value
 
     def execute_write(
-            self, data_type: str, address: str, data: Union[str, int, float, bool], save_log: bool = True
+            self, data_type: str, address: str, value: Union[str, int, float, bool], save_log: bool = True
     ) -> bool:
         """Execute a write operation on the PLC.
 
         Args:
             data_type: The data type to write.
             address: The address to write to.
-            data: The value to write.
+            value: The value to write.
             save_log: Whether to save the log or not, default save.
 
         Returns:
@@ -190,7 +190,7 @@ class MitsubishiPlc:
         """
         with self.lock:
             write_func = getattr(self, f"write_{data_type}")
-            return write_func(address, data, save_log=save_log)
+            return write_func(address, value, save_log=save_log)
 
     def write_bool(self, address: str, value: bool, save_log: bool = True) -> bool:
         """Write a boolean value to the PLC.
