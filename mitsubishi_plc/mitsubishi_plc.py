@@ -1,5 +1,8 @@
 """三菱PLC模块."""
 import logging
+import os
+import pathlib
+from logging.handlers import TimedRotatingFileHandler
 from typing import Union
 from threading import Lock
 
@@ -10,13 +13,66 @@ from mitsubishi_plc.exception import PLCConnectError
 
 class MitsubishiPlc:
     """MitsubishiPlc class."""
+    LOG_FORMAT = "%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s"
 
-    def __init__(self, plc_ip, port):
+
+    def __init__(self, plc_ip: str, port: int, plc_name: str = ""):
+        """MitsubishiPlc 构造方法.
+
+        Args:
+            plc_ip: plc ip address.
+            port: plc port.
+        """
+        logging.basicConfig(level=logging.INFO, encoding="UTF-8", format=self.LOG_FORMAT)
+
         self.plc_ip = plc_ip
+        self.plc_name = plc_name if plc_name else plc_ip
         self.logger = logging.getLogger(__name__)
         self.melsec_net = MelsecMcNet(plc_ip, port)
         self._connection_state = False
         self.lock = Lock()
+        self._file_handler = None
+
+    def _initial_log_config(self) -> None:
+        """日志配置."""
+        self._create_log_dir()
+        self.logger.addHandler(self.file_handler)  # handler_passive 日志保存到统一文件
+
+    @property
+    def file_handler(self) -> TimedRotatingFileHandler:
+        """设置保存日志的处理器, 每隔 24h 自动生成一个日志文件.
+
+        Returns:
+            TimedRotatingFileHandler: 返回 TimedRotatingFileHandler 日志处理器.
+        """
+        if self._file_handler is None:
+            self._file_handler = TimedRotatingFileHandler(
+                f"{os.getcwd()}/log/plc_{self.plc_name}.log",
+                when="D", interval=1, backupCount=10, encoding="UTF-8"
+            )
+            self._file_handler.namer = self._custom_log_name
+            self._file_handler.setFormatter(logging.Formatter(self.LOG_FORMAT))
+        return self._file_handler
+
+    def _custom_log_name(self, log_path: str):
+        """自定义新生成的日志名称.
+
+        Args:
+            log_path: 原始的日志文件路径.
+
+        Returns:
+            str: 新生成的自定义日志文件路径.
+        """
+        _, suffix, date_str = log_path.split(".")
+        new_log_path = f"{os.getcwd()}/log/plc_{self.plc_name}_{date_str}.{suffix}"
+        return new_log_path
+
+    @staticmethod
+    def _create_log_dir():
+        """判断log目录是否存在, 不存在就创建."""
+        log_dir = pathlib.Path(f"{os.getcwd()}/log")
+        if not log_dir.exists():
+            os.mkdir(log_dir)
 
     @property
     def open_state(self) -> bool:
