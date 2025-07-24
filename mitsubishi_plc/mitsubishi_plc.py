@@ -16,15 +16,18 @@ class MitsubishiPlc:
     LOG_FORMAT = "%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s"
 
 
-    def __init__(self, plc_ip: str, port: int, plc_name: str = ""):
+    def __init__(self, plc_ip: str, port: int, plc_name: str = "", save_log: bool = False):
         """MitsubishiPlc 构造方法.
 
         Args:
             plc_ip: plc ip address.
             port: plc port.
+            plc_name: plc_name.
+            save_log: whether save log or not.
         """
         logging.basicConfig(level=logging.INFO, encoding="UTF-8", format=self.LOG_FORMAT)
 
+        self.save_log = save_log
         self.plc_ip = plc_ip
         self.plc_name = plc_name if plc_name else plc_ip
         self.logger = logging.getLogger(__name__)
@@ -35,8 +38,9 @@ class MitsubishiPlc:
 
     def _initial_log_config(self) -> None:
         """日志配置."""
-        self._create_log_dir()
-        self.logger.addHandler(self.file_handler)  # handler_passive 日志保存到统一文件
+        if self.save_log:
+            self._create_log_dir()
+            self.logger.addHandler(self.file_handler)  # handler_passive 日志保存到统一文件
 
     @property
     def file_handler(self) -> TimedRotatingFileHandler:
