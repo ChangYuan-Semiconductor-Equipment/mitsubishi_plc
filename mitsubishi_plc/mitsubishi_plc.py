@@ -36,7 +36,7 @@ class MitsubishiPlc:
         self.lock = Lock()
         self._file_handler = None
 
-    def _initial_log_config(self) -> None:
+    def _initial_log_config(self):
         """日志配置."""
         if self.save_log:
             self._create_log_dir()
@@ -229,7 +229,11 @@ class MitsubishiPlc:
             Union[str, list]: The value read from the PLC.
         """
         string_result = self.melsec_net.ReadString(address, size)
-        string_value = string_result.Content.strip().replace("\x00", "")
+        string_value = string_result.Content
+        if string_value:
+            string_value = string_value.strip().replace("\x00", "")
+        else:
+            string_value = ""
         if save_log:
             self.logger.info("Read string on %s, returned string value: %s", address, string_value)
         return string_value
