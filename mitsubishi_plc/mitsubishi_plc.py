@@ -11,7 +11,7 @@ from HslCommunication import MelsecMcNet
 from mitsubishi_plc.exception import PLCConnectError
 
 
-class MitsubishiPlc:
+class MitsubishiPlc: # pylint: disable = R0902
     """MitsubishiPlc class."""
     LOG_FORMAT = "%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s"
 
